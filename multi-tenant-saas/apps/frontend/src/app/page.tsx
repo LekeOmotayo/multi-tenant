@@ -1,6 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '../hooks/useAuth';
 import styles from './page.module.css';
 
 interface BackendResponse {
@@ -15,10 +17,19 @@ interface HealthResponse {
 }
 
 export default function Index() {
+  const { isAuthenticated } = useAuth();
+  const router = useRouter();
   const [backendMessage, setBackendMessage] = useState<BackendResponse | null>(null);
   const [healthStatus, setHealthStatus] = useState<HealthResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Redirect to dashboard if authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.push('/dashboard');
+    }
+  }, [isAuthenticated, router]);
 
   const fetchBackendData = async () => {
     setLoading(true);
@@ -48,6 +59,18 @@ export default function Index() {
   useEffect(() => {
     fetchBackendData();
   }, []);
+
+  // Show loading while checking authentication
+  if (isAuthenticated) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Redirecting to dashboard...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.page}>
@@ -79,6 +102,25 @@ export default function Index() {
                 <span>Frontend ↔ Backend Communication</span>
               </h2>
               <p>Real-time communication between React frontend and NestJS backend</p>
+            </div>
+          </div>
+
+          {/* Authentication Section */}
+          <div id="auth-section" className="rounded shadow">
+            <h2>🔐 Authentication Ready</h2>
+            <div className="auth-actions">
+              <a
+                href="/auth/signin"
+                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              >
+                Sign In
+              </a>
+              <a
+                href="/auth/signup"
+                className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ml-3"
+              >
+                Sign Up
+              </a>
             </div>
           </div>
 
@@ -141,9 +183,9 @@ export default function Index() {
               <div className="feature-card">
                 <h3>🔐 Authentication & Authorization</h3>
                 <ul>
-                  <li>SSO (Google, Microsoft, custom JWT)</li>
+                  <li>JWT-based authentication (access + refresh tokens)</li>
+                  <li>Password hashing with bcrypt</li>
                   <li>Role-based access control (RBAC)</li>
-                  <li>Attribute-based access control (ABAC)</li>
                   <li>Multi-tenancy with tenant isolation</li>
                 </ul>
               </div>
@@ -183,7 +225,7 @@ export default function Index() {
               <div className="tech-section">
                 <h3>Frontend</h3>
                 <ul>
-                  <li>React 18 + TypeScript</li>
+                  <li>React 19 + TypeScript</li>
                   <li>Next.js (SSR/SSG)</li>
                   <li>Tailwind + Radix UI + shadcn/ui</li>
                   <li>Zustand + TanStack Query</li>

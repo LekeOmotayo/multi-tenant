@@ -23,12 +23,7 @@
     },
     {
       "files": ["*.ts", "*.tsx"],
-      "extends": [
-        "@nx/typescript",
-        "plugin:@typescript-eslint/recommended",
-        "plugin:@typescript-eslint/recommended-requiring-type-checking",
-        "prettier"
-      ],
+      "extends": ["plugin:@typescript-eslint/recommended", "prettier"],
       "rules": {
         "@typescript-eslint/no-unused-vars": "error",
         "@typescript-eslint/no-explicit-any": "warn",
@@ -44,7 +39,7 @@
     },
     {
       "files": ["*.js", "*.jsx"],
-      "extends": ["@nx/javascript", "prettier"],
+      "extends": ["prettier"],
       "rules": {}
     },
     {
